@@ -2,7 +2,7 @@
 
 const SEGMENTS = {
   MSH: {
-    full: "Message Header — always the first segment",
+    full: "Message Header &mdash; always the first segment",
     example: "MSH|^~\\&|HIS|HOSPITAL|LAB|LABSYS|20240115123000||ADT^A01|MSG001|P|2.5.1",
     fields: [
       ["MSH-1",  "Field Separator",       "The character used to split fields. Usually |"],
@@ -14,11 +14,11 @@ const SEGMENTS = {
       ["MSH-9",  "Message Type",          "Code^Trigger, e.g. ADT^A01"],
       ["MSH-10", "Message Control ID",    "Unique ID for this message"],
       ["MSH-11", "Processing ID",         "P=Production, T=Training, D=Debug"],
-      ["MSH-12", "Version ID",            "e.g. 2.5.1 — determines field meanings"],
+      ["MSH-12", "Version ID",            "e.g. 2.5.1 &mdash; determines field meanings"],
     ],
   },
   PID: {
-    full: "Patient Identification — who the message is about",
+    full: "Patient Identification &mdash; who the message is about",
     example: "PID|1||123456^^^MRN^MR||DOE^JOHN^A||19800115|M|||123 MAIN ST^^BOSTON^MA^02101",
     fields: [
       ["PID-1",  "Set ID",                  "Sequence number for repeated PID segments"],
@@ -27,13 +27,13 @@ const SEGMENTS = {
       ["PID-7",  "Date of Birth",           "YYYYMMDD"],
       ["PID-8",  "Administrative Sex",      "M/F/O/U/A/N"],
       ["PID-11", "Patient Address",         "Street^Other^City^State^Zip^Country"],
-      ["PID-13", "Phone Number — Home",     "Home phone"],
+      ["PID-13", "Phone Number &mdash; Home",     "Home phone"],
       ["PID-16", "Marital Status",          "S/M/D/W"],
       ["PID-18", "Patient Account Number",  "Billing account"],
     ],
   },
   PV1: {
-    full: "Patient Visit — the encounter/visit details",
+    full: "Patient Visit &mdash; the encounter/visit details",
     example: "PV1|1|I|ICU^101^A^HOSP||||1234^SMITH^ROBERT||||||||||||V12345",
     fields: [
       ["PV1-1",  "Set ID",                    "Sequence number"],
@@ -44,10 +44,10 @@ const SEGMENTS = {
     ],
   },
   OBX: {
-    full: "Observation Result — a single test result or finding",
+    full: "Observation Result &mdash; a single test result or finding",
     example: "OBX|1|NM|WBC^White Blood Count||7.2|10*3/uL|4.0-11.0|N|||F",
     fields: [
-      ["OBX-1",  "Set ID",                    "Sequence — multiple OBX segments = multiple results"],
+      ["OBX-1",  "Set ID",                    "Sequence &mdash; multiple OBX segments = multiple results"],
       ["OBX-2",  "Value Type",                "ST=String, NM=Numeric, CE=Coded, DT=Date"],
       ["OBX-3",  "Observation Identifier",    "LOINC code^Display name"],
       ["OBX-5",  "Observation Value",         "The actual result"],
@@ -58,7 +58,7 @@ const SEGMENTS = {
     ],
   },
   OBR: {
-    full: "Observation Request — the order/test that produced the results",
+    full: "Observation Request &mdash; the order/test that produced the results",
     example: "OBR|1|P123|F456|CBC^Complete Blood Count|||20240115120000",
     fields: [
       ["OBR-1",  "Set ID",                     "Sequence number"],
@@ -78,10 +78,10 @@ const WALKTHROUGH = [
     role: "Message Header",
     desc: "Every HL7 message starts with this. It tells the receiver who sent the message, when, what type it is, and which version of HL7 to use when interpreting the rest.",
     fields: [
-      ["MSH-3", "HIS — sending application"],
-      ["MSH-9", "ADT^A01 — Admit message"],
-      ["MSH-10", "MSG001 — unique control ID"],
-      ["MSH-12", "2.5.1 — HL7 version"],
+      ["MSH-3", "HIS &mdash; sending application"],
+      ["MSH-9", "ADT^A01 &mdash; Admit message"],
+      ["MSH-10", "MSG001 &mdash; unique control ID"],
+      ["MSH-12", "2.5.1 &mdash; HL7 version"],
     ],
   },
   {
@@ -90,20 +90,20 @@ const WALKTHROUGH = [
     role: "Event Type",
     desc: "Describes the event that triggered this message. A01 means 'admit'. The second field is when the event was recorded.",
     fields: [
-      ["EVN-1", "A01 — admit event"],
-      ["EVN-2", "20240115123000 — event timestamp"],
+      ["EVN-1", "A01 &mdash; admit event"],
+      ["EVN-2", "20240115123000 &mdash; event timestamp"],
     ],
   },
   {
     line: "PID|1||123456^^^MRN^MR||DOE^JOHN^A||19800115|M",
     seg: "PID",
     role: "Patient Identification",
-    desc: "Identifies the patient. This is where MRNs, names, dates of birth, and demographic data live. Note the empty PID-2 and PID-4 — legal, means the field exists but is empty.",
+    desc: "Identifies the patient. This is where MRNs, names, dates of birth, and demographic data live. Note the empty PID-2 and PID-4 &mdash; legal, means the field exists but is empty.",
     fields: [
-      ["PID-3", "123456^^^MRN^MR — MRN with authority"],
-      ["PID-5", "DOE^JOHN^A — family, given, middle"],
-      ["PID-7", "19800115 — date of birth"],
-      ["PID-8", "M — male"],
+      ["PID-3", "123456^^^MRN^MR &mdash; MRN with authority"],
+      ["PID-5", "DOE^JOHN^A &mdash; family, given, middle"],
+      ["PID-7", "19800115 &mdash; date of birth"],
+      ["PID-8", "M &mdash; male"],
     ],
   },
   {
@@ -112,10 +112,10 @@ const WALKTHROUGH = [
     role: "Patient Visit",
     desc: "Details of the hospital visit. Patient class (inpatient/outpatient), the physical location, the attending physician, and the visit number all live here.",
     fields: [
-      ["PV1-2", "I — inpatient"],
-      ["PV1-3", "ICU^101^A^HOSP — location"],
-      ["PV1-7", "1234^SMITH^ROBERT — attending"],
-      ["PV1-19", "V12345 — visit number"],
+      ["PV1-2", "I &mdash; inpatient"],
+      ["PV1-3", "ICU^101^A^HOSP &mdash; location"],
+      ["PV1-7", "1234^SMITH^ROBERT &mdash; attending"],
+      ["PV1-19", "V12345 &mdash; visit number"],
     ],
   },
 ];

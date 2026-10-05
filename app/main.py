@@ -11,16 +11,10 @@ from fastapi.staticfiles import StaticFiles
 from app.api.routes import router
 from app.core.config import APP_NAME, APP_VERSION, ALLOWED_ORIGINS
 
-# ─────────────────────────────────────────────────────────────
-# Paths
-# ─────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 PUBLIC_DIR = BASE_DIR / "public"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
-# ─────────────────────────────────────────────────────────────
-# App
-# ─────────────────────────────────────────────────────────────
 app = FastAPI(title=APP_NAME, version=APP_VERSION)
 
 app.add_middleware(
@@ -31,22 +25,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─────────────────────────────────────────────────────────────
-# 1. API routes FIRST (so /api/* is never shadowed)
-# ─────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────
+# 1. API routes FIRST — they must not be shadowed by anything
+# ───────────────────────────────────────────────────────────
 app.include_router(router)
 
-# ─────────────────────────────────────────────────────────────
+
+# ───────────────────────────────────────────────────────────
 # 2. HTML page routes SECOND
-# ─────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────
 def _html_page(filename: str) -> FileResponse:
-    """Serve an HTML file, preferring public/ then app/static/."""
+    """Serve an HTML file with explicit UTF-8 charset."""
     public_path = PUBLIC_DIR / filename
     static_path = STATIC_DIR / filename
-    if public_path.exists():
-        return FileResponse(str(public_path))
-    return FileResponse(str(static_path))
-
+    path = public_path if public_path.exists() else static_path
+    return FileResponse(
+        str(path),
+        media_type="text/html; charset=utf-8",
+    )
 
 @app.get("/")
 def index() -> FileResponse:
@@ -58,13 +54,11 @@ def learn() -> FileResponse:
     return _html_page("learn.html")
 
 
-# ─────────────────────────────────────────────────────────────
-# 3. Static mounts LAST (so they don't shadow API or HTML routes)
-# ─────────────────────────────────────────────────────────────
-# Mount /static → app/static (kept for backward compatibility)
+# ───────────────────────────────────────────────────────────
+# 3. Static mounts LAST
+# ───────────────────────────────────────────────────────────
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-# Mount / → public/ (serves CSS/JS/HTML at root for Vercel)
 if PUBLIC_DIR.exists():
     app.mount("/", StaticFiles(directory=str(PUBLIC_DIR), html=True), name="public")

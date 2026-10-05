@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   HL7 Inspector — Premium Enterprise Theme v2
+   HL7 Inspector &mdash; Premium Enterprise Theme v2
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -75,7 +75,7 @@ a { color: var(--teal-600); text-decoration: none; transition: color .15s var(--
 a:hover { color: var(--teal-500); }
 
 /* ═══════════════════════════════════════════════════════════
-   HERO — forced single-column layout (matches Learn page)
+   HERO &mdash; forced single-column layout (matches Learn page)
    ═══════════════════════════════════════════════════════════ */
 
 .hero {
