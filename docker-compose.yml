@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  hl7-inspector:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - HL7_MAX_MESSAGE_BYTES=2000000
+      - HL7_ALLOWED_ORIGINS=http://localhost:8000

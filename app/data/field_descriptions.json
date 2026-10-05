@@ -1,0 +1,116 @@
+{
+  "segments": {
+    "MSH": {
+      "description": "Message Header",
+      "fields": {
+        "3": {"name": "Sending Application", "description": "Identifies the application that sent the message."},
+        "4": {"name": "Sending Facility", "description": "Identifies the facility that sent the message."},
+        "5": {"name": "Receiving Application", "description": "Identifies the intended receiving application."},
+        "6": {"name": "Receiving Facility", "description": "Identifies the intended receiving facility."},
+        "7": {"name": "Date/Time of Message", "description": "Timestamp of when the message was created (YYYYMMDDHHMMSS)."},
+        "9": {"name": "Message Type", "description": "Message code and trigger event, e.g. ADT^A01."},
+        "10": {"name": "Message Control ID", "description": "Unique identifier for this message, used for acknowledgements."},
+        "11": {"name": "Processing ID", "description": "P=Production, T=Training, D=Debugging."},
+        "12": {"name": "Version ID", "description": "HL7 version, e.g. 2.5.1."}
+      }
+    },
+    "EVN": {
+      "description": "Event Type",
+      "fields": {
+        "1": {"name": "Event Type Code", "description": "Code identifying the event (e.g. A01)."},
+        "2": {"name": "Recorded Date/Time", "description": "When the event was recorded."}
+      }
+    },
+    "PID": {
+      "description": "Patient Identification",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number for repeating PID segments."},
+        "3": {"name": "Patient Identifier List", "description": "Medical record number(s) and assigning authority."},
+        "5": {"name": "Patient Name", "description": "Family^Given^Middle^Suffix^Prefix^Degree."},
+        "7": {"name": "Date/Time of Birth", "description": "Patient's date of birth (YYYYMMDD)."},
+        "8": {"name": "Administrative Sex", "description": "M=Male, F=Female, O=Other, U=Unknown."},
+        "11": {"name": "Patient Address", "description": "Street^Other^City^State^Zip^Country."},
+        "13": {"name": "Phone Number - Home", "description": "Home phone number."},
+        "16": {"name": "Marital Status", "description": "Marital status code."},
+        "18": {"name": "Patient Account Number", "description": "Account number for billing."}
+      }
+    },
+    "PV1": {
+      "description": "Patient Visit",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "2": {"name": "Patient Class", "description": "I=Inpatient, O=Outpatient, E=Emergency."},
+        "3": {"name": "Assigned Patient Location", "description": "Point of care^room^bed^facility."},
+        "7": {"name": "Attending Doctor", "description": "Attending physician ID and name."},
+        "19": {"name": "Visit Number", "description": "Unique visit/encounter identifier."}
+      }
+    },
+    "NK1": {
+      "description": "Next of Kin",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "2": {"name": "Name", "description": "Next of kin name."},
+        "3": {"name": "Relationship", "description": "Relationship to patient."}
+      }
+    },
+    "ORC": {
+      "description": "Common Order",
+      "fields": {
+        "1": {"name": "Order Control", "description": "NW=New order, CA=Cancel, etc."},
+        "2": {"name": "Placer Order Number", "description": "Order number from placer."},
+        "3": {"name": "Filler Order Number", "description": "Order number from filler."},
+        "5": {"name": "Order Status", "description": "Status of the order."}
+      }
+    },
+    "OBR": {
+      "description": "Observation Request",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "2": {"name": "Placer Order Number", "description": "Placer order number."},
+        "3": {"name": "Filler Order Number", "description": "Filler order number."},
+        "4": {"name": "Universal Service Identifier", "description": "Test/panel being ordered."},
+        "7": {"name": "Observation Date/Time", "description": "When observation was requested."},
+        "14": {"name": "Specimen Received Date/Time", "description": "When specimen was received."},
+        "16": {"name": "Ordering Provider", "description": "Provider who ordered the test."}
+      }
+    },
+    "OBX": {
+      "description": "Observation Result",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "2": {"name": "Value Type", "description": "ST=String, NM=Numeric, CE=Coded."},
+        "3": {"name": "Observation Identifier", "description": "LOINC code and description."},
+        "5": {"name": "Observation Value", "description": "The result value."},
+        "6": {"name": "Units", "description": "Unit of measure."},
+        "7": {"name": "References Range", "description": "Normal reference range."},
+        "8": {"name": "Abnormal Flags", "description": "H=High, L=Low, N=Normal."},
+        "11": {"name": "Observation Result Status", "description": "F=Final, P=Preliminary, C=Corrected."}
+      }
+    },
+    "AL1": {
+      "description": "Allergy Information",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "2": {"name": "Allergen Type Code", "description": "DA=Drug, FA=Food, MA=Miscellaneous."},
+        "3": {"name": "Allergen Code/Mnemonic/Description", "description": "The allergen."},
+        "4": {"name": "Allergy Severity Code", "description": "Severity of reaction."}
+      }
+    },
+    "DG1": {
+      "description": "Diagnosis",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "3": {"name": "Diagnosis Code", "description": "ICD code and description."},
+        "5": {"name": "Diagnosis Date/Time", "description": "Date of diagnosis."}
+      }
+    },
+    "NTE": {
+      "description": "Notes and Comments",
+      "fields": {
+        "1": {"name": "Set ID", "description": "Sequence number."},
+        "2": {"name": "Source of Comment", "description": "Origin of the comment."},
+        "3": {"name": "Comment", "description": "The comment text."}
+      }
+    }
+  }
+}

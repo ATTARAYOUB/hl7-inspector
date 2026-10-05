@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HL7 Inspector</title>
+<link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <span class="logo">HL7</span>
+    <span class="title">Inspector</span>
+  </div>
+  <div class="badge">v1.0 &middot; HL7 v2 &rarr; JSON / XML / FHIR / ACK</div>
+</header>
+
+<main class="container">
+  <section class="panel">
+    <div class="panel-head">
+      <h2>HL7 Message Input</h2>
+      <div class="actions">
+        <button id="btn-sample" class="btn ghost">Load Sample</button>
+        <input type="file" id="file-input" accept=".hl7,.txt" hidden/>
+        <button id="btn-upload" class="btn ghost">Upload</button>
+        <button id="btn-clear" class="btn ghost">Clear</button>
+      </div>
+    </div>
+    <textarea id="input" spellcheck="false" placeholder="Paste an HL7 v2 message here, or click Load Sample…"></textarea>
+    <div class="row">
+      <button id="btn-parse" class="btn primary">Parse Message</button>
+      <span id="parse-status" class="status"></span>
+    </div>
+  </section>
+
+  <section id="overview-card" class="panel hidden">
+    <div class="panel-head"><h2>Message Overview</h2></div>
+    <div id="overview" class="overview-grid"></div>
+  </section>
+
+  <section id="validation-card" class="panel hidden">
+    <div class="panel-head"><h2>Validation Results</h2></div>
+    <div id="validation-summary" class="validation-summary"></div>
+    <div id="validation-list" class="validation-list"></div>
+  </section>
+
+  <section id="explorer-card" class="panel hidden">
+    <div class="panel-head"><h2>Segment Explorer</h2></div>
+    <div id="explorer" class="explorer"></div>
+  </section>
+
+  <section id="outputs-card" class="panel hidden">
+    <div class="panel-head"><h2>Outputs</h2></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="json" class="tab active">JSON</button>
+      <button data-tab="xml" class="tab">XML</button>
+      <button data-tab="fhir" class="tab">FHIR (R4)</button>
+      <button data-tab="ack" class="tab">ACK</button>
+    </nav>
+    <div class="output-toolbar">
+      <button id="btn-copy" class="btn ghost">Copy</button>
+      <button id="btn-download" class="btn ghost">Download</button>
+      <span id="output-status" class="status"></span>
+    </div>
+    <pre id="output" class="output"></pre>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <div>
+    HL7 Inspector v1.0 &middot; Local tool &middot; Not a certified interface engine.
+  </div>
+  <div class="privacy">
+    Privacy: messages stay in your browser session; nothing is stored on the server.
+    Use synthetic data only.
+  </div>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
