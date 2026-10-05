@@ -1,212 +1,210 @@
 "use strict";
 
-const SAMPLE = [
-  "MSH|^~\\&|SENDAPP|SENDFAC|RECVAPP|RECVFAC|20240115123000||ADT^A01^ADT_A01|MSG00001|P|2.5.1",
-  "EVN|A01|20240115123000",
-  "PID|1||123456^^^MRN^MR||DOE^JOHN^A||19800115|M|||123 MAIN ST^APT 4^BOSTON^MA^02101^USA||555-1234",
-  "NK1|1|DOE^JANE|SPO",
-  "PV1|1|I|ICU^101^A^HOSP||||1234^SMITH^ROBERT||||||||||||V12345",
-  "AL1|1|DA|^PENICILLIN||MODERATE",
-  "DG1|1||^PNEUMONIA^ICD10",
-].join("\r");
+const SEGMENTS = {
+  MSH: {
+    full: "Message Header — always the first segment",
+    example: "MSH|^~\\&|HIS|HOSPITAL|LAB|LABSYS|20240115123000||ADT^A01|MSG001|P|2.5.1",
+    fields: [
+      ["MSH-1",  "Field Separator",       "The character used to split fields. Usually |"],
+      ["MSH-2",  "Encoding Characters",   "Component^Repetition~Escape\\Subcomponent&"],
+      ["MSH-3",  "Sending Application",   "Which system sent this message"],
+      ["MSH-4",  "Sending Facility",      "Which hospital/clinic sent it"],
+      ["MSH-5",  "Receiving Application", "Which system should receive it"],
+      ["MSH-7",  "Date/Time of Message",  "When the message was created"],
+      ["MSH-9",  "Message Type",          "Code^Trigger, e.g. ADT^A01"],
+      ["MSH-10", "Message Control ID",    "Unique ID for this message"],
+      ["MSH-11", "Processing ID",         "P=Production, T=Training, D=Debug"],
+      ["MSH-12", "Version ID",            "e.g. 2.5.1 — determines field meanings"],
+    ],
+  },
+  PID: {
+    full: "Patient Identification — who the message is about",
+    example: "PID|1||123456^^^MRN^MR||DOE^JOHN^A||19800115|M|||123 MAIN ST^^BOSTON^MA^02101",
+    fields: [
+      ["PID-1",  "Set ID",                  "Sequence number for repeated PID segments"],
+      ["PID-3",  "Patient Identifier List", "MRN and assigning authority"],
+      ["PID-5",  "Patient Name",            "Family^Given^Middle^Suffix^Prefix"],
+      ["PID-7",  "Date of Birth",           "YYYYMMDD"],
+      ["PID-8",  "Administrative Sex",      "M/F/O/U/A/N"],
+      ["PID-11", "Patient Address",         "Street^Other^City^State^Zip^Country"],
+      ["PID-13", "Phone Number — Home",     "Home phone"],
+      ["PID-16", "Marital Status",          "S/M/D/W"],
+      ["PID-18", "Patient Account Number",  "Billing account"],
+    ],
+  },
+  PV1: {
+    full: "Patient Visit — the encounter/visit details",
+    example: "PV1|1|I|ICU^101^A^HOSP||||1234^SMITH^ROBERT||||||||||||V12345",
+    fields: [
+      ["PV1-1",  "Set ID",                    "Sequence number"],
+      ["PV1-2",  "Patient Class",             "I=Inpatient, O=Outpatient, E=Emergency"],
+      ["PV1-3",  "Assigned Patient Location", "Point of care^Room^Bed^Facility"],
+      ["PV1-7",  "Attending Doctor",          "ID^Family^Given"],
+      ["PV1-19", "Visit Number",              "Unique encounter identifier"],
+    ],
+  },
+  OBX: {
+    full: "Observation Result — a single test result or finding",
+    example: "OBX|1|NM|WBC^White Blood Count||7.2|10*3/uL|4.0-11.0|N|||F",
+    fields: [
+      ["OBX-1",  "Set ID",                    "Sequence — multiple OBX segments = multiple results"],
+      ["OBX-2",  "Value Type",                "ST=String, NM=Numeric, CE=Coded, DT=Date"],
+      ["OBX-3",  "Observation Identifier",    "LOINC code^Display name"],
+      ["OBX-5",  "Observation Value",         "The actual result"],
+      ["OBX-6",  "Units",                     "Unit of measure"],
+      ["OBX-7",  "Reference Range",           "e.g. 4.0-11.0"],
+      ["OBX-8",  "Abnormal Flags",            "H=High, L=Low, N=Normal, HH=Critical high"],
+      ["OBX-11", "Observation Result Status", "F=Final, P=Preliminary, C=Corrected"],
+    ],
+  },
+  OBR: {
+    full: "Observation Request — the order/test that produced the results",
+    example: "OBR|1|P123|F456|CBC^Complete Blood Count|||20240115120000",
+    fields: [
+      ["OBR-1",  "Set ID",                     "Sequence number"],
+      ["OBR-2",  "Placer Order Number",        "Order number from the requesting system"],
+      ["OBR-3",  "Filler Order Number",        "Order number from the performing system"],
+      ["OBR-4",  "Universal Service ID",       "Test/panel code^name"],
+      ["OBR-7",  "Observation Date/Time",      "When the test was requested/performed"],
+      ["OBR-16", "Ordering Provider",          "Physician who ordered the test"],
+    ],
+  },
+};
 
-const $ = (id) => document.getElementById(id);
-let lastParsed = null;
-let currentTab = "json";
-const outputs = { json: null, xml: null, fhir: null, ack: null };
+const WALKTHROUGH = [
+  {
+    line: "MSH|^~\\&|HIS|HOSPITAL|LAB|LABSYS|20240115123000||ADT^A01|MSG001|P|2.5.1",
+    seg: "MSH",
+    role: "Message Header",
+    desc: "Every HL7 message starts with this. It tells the receiver who sent the message, when, what type it is, and which version of HL7 to use when interpreting the rest.",
+    fields: [
+      ["MSH-3", "HIS — sending application"],
+      ["MSH-9", "ADT^A01 — Admit message"],
+      ["MSH-10", "MSG001 — unique control ID"],
+      ["MSH-12", "2.5.1 — HL7 version"],
+    ],
+  },
+  {
+    line: "EVN|A01|20240115123000",
+    seg: "EVN",
+    role: "Event Type",
+    desc: "Describes the event that triggered this message. A01 means 'admit'. The second field is when the event was recorded.",
+    fields: [
+      ["EVN-1", "A01 — admit event"],
+      ["EVN-2", "20240115123000 — event timestamp"],
+    ],
+  },
+  {
+    line: "PID|1||123456^^^MRN^MR||DOE^JOHN^A||19800115|M",
+    seg: "PID",
+    role: "Patient Identification",
+    desc: "Identifies the patient. This is where MRNs, names, dates of birth, and demographic data live. Note the empty PID-2 and PID-4 — legal, means the field exists but is empty.",
+    fields: [
+      ["PID-3", "123456^^^MRN^MR — MRN with authority"],
+      ["PID-5", "DOE^JOHN^A — family, given, middle"],
+      ["PID-7", "19800115 — date of birth"],
+      ["PID-8", "M — male"],
+    ],
+  },
+  {
+    line: "PV1|1|I|ICU^101^A^HOSP||||1234^SMITH^ROBERT||||||||||||V12345",
+    seg: "PV1",
+    role: "Patient Visit",
+    desc: "Details of the hospital visit. Patient class (inpatient/outpatient), the physical location, the attending physician, and the visit number all live here.",
+    fields: [
+      ["PV1-2", "I — inpatient"],
+      ["PV1-3", "ICU^101^A^HOSP — location"],
+      ["PV1-7", "1234^SMITH^ROBERT — attending"],
+      ["PV1-19", "V12345 — visit number"],
+    ],
+  },
+];
 
-function escapeHtml(s){
+function renderSegment(segName) {
+  const seg = SEGMENTS[segName];
+  if (!seg) return;
+
+  const rows = seg.fields.map(([pos, name, desc]) => `
+    <tr>
+      <td class="f-pos">${pos}</td>
+      <td class="f-name">${name}</td>
+      <td class="f-desc">${desc}</td>
+    </tr>
+  `).join("");
+
+  document.getElementById("segment-panel").innerHTML = `
+    <h3>${segName}</h3>
+    <p class="seg-full">${seg.full}</p>
+    <pre>${seg.example}</pre>
+    <table class="field-table">
+      <thead>
+        <tr><th>Position</th><th>Field</th><th>Meaning</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+document.querySelectorAll(".seg-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".seg-tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    renderSegment(tab.dataset.seg);
+  });
+});
+renderSegment("MSH");
+
+function renderWalkthrough() {
+  const codeEl = document.getElementById("walkthrough-code");
+  const html = WALKTHROUGH.map((entry, i) => {
+    const segMatch = entry.line.match(/^([A-Z]{3})/);
+    const rest = entry.line.slice(3);
+    const rendered = segMatch
+      ? `<span class="wt-seg">${segMatch[1]}</span>${escapeHtml(rest)}`
+      : escapeHtml(entry.line);
+    return `<div class="wt-line" data-idx="${i}">${rendered}</div>`;
+  }).join("");
+  codeEl.innerHTML = html;
+
+  codeEl.querySelectorAll(".wt-line").forEach(el => {
+    el.addEventListener("click", () => {
+      codeEl.querySelectorAll(".wt-line").forEach(l => l.classList.remove("active"));
+      el.classList.add("active");
+      showWalkthrough(parseInt(el.dataset.idx, 10));
+    });
+  });
+}
+
+function showWalkthrough(idx) {
+  const entry = WALKTHROUGH[idx];
+  if (!entry) return;
+
+  const fields = entry.fields.map(([tag, txt]) => `
+    <div class="wt-field">
+      <span class="tag">${tag}</span>
+      <span class="txt">${escapeHtml(txt)}</span>
+    </div>
+  `).join("");
+
+  document.getElementById("walkthrough-explain").innerHTML = `
+    <div class="wt-content">
+      <h3>${entry.seg}</h3>
+      <div class="wt-role">${entry.role}</div>
+      <p>${escapeHtml(entry.desc)}</p>
+      <div class="wt-fields">${fields}</div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[c]);
 }
 
-function setStatus(el, msg, kind){
-  el.textContent = msg || "";
-  el.className = "status" + (kind ? " " + kind : "");
-}
-
-async function api(path, body){
-  const res = await fetch(path, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
-}
-
-function renderOverview(ov){
-  const keys = [
-    ["message_type","Message Type"],["trigger_event","Trigger Event"],
-    ["sending_application","Sending Application"],["sending_facility","Sending Facility"],
-    ["receiving_application","Receiving Application"],["receiving_facility","Receiving Facility"],
-    ["message_datetime","Message Datetime"],["message_control_id","Message Control ID"],
-    ["processing_id","Processing ID"],["version","HL7 Version"],
-    ["segment_count","Segments"],
-  ];
-  $("overview").innerHTML = keys.map(([k,label]) => {
-    const v = ov[k] ?? "";
-    return `<div class="ov-item"><div class="k">${label}</div><div class="v">${escapeHtml(v)}</div></div>`;
-  }).join("");
-}
-
-function renderValidation(val){
-  const c = val.counts || {ERROR:0,WARNING:0,INFO:0};
-  const chips = [
-    `<span class="chip ${val.is_valid ? "ok" : "err"}">${val.is_valid ? "VALID" : "INVALID"}</span>`,
-    `<span class="chip err">ERROR ${c.ERROR}</span>`,
-    `<span class="chip warn">WARNING ${c.WARNING}</span>`,
-    `<span class="chip info">INFO ${c.INFO}</span>`,
-  ].join("");
-  $("validation-summary").innerHTML = chips;
-  const list = (val.results || []).map(r => `
-    <div class="vr ${r.level}">
-      <div class="loc">${escapeHtml(r.location || "")} &middot; ${escapeHtml(r.code)}</div>
-      <div class="desc">${escapeHtml(r.description)}</div>
-      <div class="exp">${escapeHtml(r.explanation || "")}${r.suggestion ? " — " + escapeHtml(r.suggestion) : ""}</div>
-    </div>`).join("");
-  $("validation-list").innerHTML = list || '<div class="vr INFO"><div class="desc">No validation issues.</div></div>';
-}
-
-function renderExplorer(explanation){
-  const html = explanation.segments.map(seg => {
-    const rows = seg.fields.map(f => `
-      <tr>
-        <td class="mono">${seg.name}-${f.position}</td>
-        <td>${escapeHtml(f.field_name)}</td>
-        <td class="mono">${escapeHtml(f.raw_value)}</td>
-        <td>${escapeHtml(f.explanation)}</td>
-      </tr>`).join("");
-    return `
-      <div class="seg" data-name="${escapeHtml(seg.name)}">
-        <div class="seg-head">${escapeHtml(seg.name)} — ${escapeHtml(seg.fields.length)} fields</div>
-        <div class="seg-body">
-          <table class="fields">
-            <thead><tr><th>Field</th><th>Name</th><th>Raw Value</th><th>Explanation</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      </div>`;
-  }).join("");
-  $("explorer").innerHTML = html;
-  document.querySelectorAll(".seg").forEach(el => {
-    el.querySelector(".seg-head").addEventListener("click", () => el.classList.toggle("open"));
-  });
-}
-
-async function loadOutput(tab){
-  currentTab = tab;
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
-  $("output").textContent = "Generating " + tab.toUpperCase() + "…";
-  setStatus($("output-status"), "", "");
-
-  if (!lastParsed){
-    $("output").textContent = "Parse a message first.";
-    return;
-  }
-
-  if (outputs[tab]){
-    $("output").textContent = outputs[tab];
-    setStatus($("output-status"), tab.toUpperCase() + " ready.", "ok");
-    return;
-  }
-
-  const res = await api(`/api/convert/${tab}`, { message: $("input").value });
-  if (!res.ok || (res.data && res.data.error)){
-    const err = (res.data && res.data.error) || "Conversion failed.";
-    outputs[tab] = null;
-    $("output").textContent = "// " + tab.toUpperCase() + " conversion failed\n// " + err;
-    setStatus($("output-status"), "Conversion failed.", "err");
-  } else {
-    outputs[tab] = res.data.output;
-    $("output").textContent = res.data.output;
-    setStatus($("output-status"), tab.toUpperCase() + " ready.", "ok");
-  }
-}
-
-async function parseMessage(){
-  const text = $("input").value;
-  if (!text.trim()){
-    setStatus($("parse-status"), "Please enter an HL7 message.", "err");
-    return;
-  }
-  setStatus($("parse-status"), "Parsing…", "");
-  Object.keys(outputs).forEach(k => outputs[k] = null);
-
-  const res = await api("/api/parse", { message: text });
-  if (!res.ok){
-    setStatus($("parse-status"), "Parse failed: " + (res.data.detail?.message || res.data.detail || res.status), "err");
-    return;
-  }
-  lastParsed = res.data;
-  renderOverview(res.data.overview);
-  renderValidation(res.data.validation);
-  renderExplorer(res.data.explanation);
-
-  $("overview-card").classList.remove("hidden");
-  $("validation-card").classList.remove("hidden");
-  $("explorer-card").classList.remove("hidden");
-  $("outputs-card").classList.remove("hidden");
-
-  outputs.json = null;
-  await loadOutput("json");
-  setStatus($("parse-status"), "Parsed successfully.", "ok");
-}
-
-function download(filename, text){
-  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+renderWalkthrough();
 
 document.addEventListener("DOMContentLoaded", () => {
-  $("btn-sample").addEventListener("click", () => {
-    $("input").value = SAMPLE;
-    setStatus($("parse-status"), "Sample loaded.", "");
-  });
-  $("btn-clear").addEventListener("click", () => {
-    $("input").value = "";
-    lastParsed = null;
-    Object.keys(outputs).forEach(k => outputs[k] = null);
-    ["overview-card","validation-card","explorer-card","outputs-card"].forEach(id =>
-      $(id).classList.add("hidden"));
-    setStatus($("parse-status"), "", "");
-  });
-  $("btn-upload").addEventListener("click", () => $("file-input").click());
-  $("file-input").addEventListener("change", async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!/\.(hl7|txt)$/i.test(file.name)){
-      setStatus($("parse-status"), "Only .hl7 or .txt files are supported.", "err");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024){
-      setStatus($("parse-status"), "File too large (max 5 MB).", "err");
-      return;
-    }
-    const text = await file.text();
-    $("input").value = text;
-    setStatus($("parse-status"), `Loaded ${file.name}.`, "ok");
-  });
-  $("btn-parse").addEventListener("click", parseMessage);
-  document.querySelectorAll(".tab").forEach(t => {
-    t.addEventListener("click", () => loadOutput(t.dataset.tab));
-  });
-  $("btn-copy").addEventListener("click", async () => {
-    const text = $("output").textContent;
-    try {
-      await navigator.clipboard.writeText(text);
-      setStatus($("output-status"), "Copied to clipboard.", "ok");
-    } catch {
-      setStatus($("output-status"), "Copy failed.", "err");
-    }
-  });
-  $("btn-download").addEventListener("click", () => {
-    const ext = { json:"json", xml:"xml", fhir:"fhir.json", ack:"hl7" }[currentTab] || "txt";
-    download(`hl7-inspector.${ext}`, $("output").textContent);
-  });
+  const y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
 });

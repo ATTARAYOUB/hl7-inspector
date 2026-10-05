@@ -2,7 +2,6 @@
    Learn page — extends base style.css
    ═══════════════════════════════════════════════════════════ */
 
-/* ── HERO ─────────────────────────────────────────────────── */
 .learn-hero {
   background:
     radial-gradient(1000px 400px at 50% 0%, rgba(14,124,134,.28), transparent 65%),
@@ -11,7 +10,11 @@
   padding: 70px 24px 60px;
   text-align: center;
 }
-.learn-hero-inner { max-width: 900px; margin: 0 auto; }
+.learn-hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: block;
+}
 
 .timeline-wrap { margin-top: 48px; }
 .timeline-svg { width: 100%; max-width: 900px; height: auto; }
@@ -26,7 +29,6 @@
 }
 .timeline-caption strong { color: var(--teal-400); }
 
-/* ── SECTIONS ─────────────────────────────────────────────── */
 .learn-section { padding: 80px 24px; }
 .learn-section.alt-bg {
   background: linear-gradient(180deg, var(--bg-50) 0%, #eef4f9 100%);
@@ -73,7 +75,7 @@
 }
 .section-lead em { color: var(--navy-800); font-style: normal; font-weight: 600; }
 
-/* ── ANATOMY DIAGRAM ──────────────────────────────────────── */
+/* Anatomy */
 .anatomy-diagram {
   background: var(--white);
   border: 1px solid var(--border);
@@ -83,7 +85,6 @@
   margin-bottom: 40px;
   overflow-x: auto;
 }
-
 .anatomy-line {
   font-family: 'JetBrains Mono', monospace;
   font-size: 15px;
@@ -91,10 +92,8 @@
   white-space: nowrap;
   line-height: 2.2;
 }
-
 .tok { padding: 6px 4px; border-radius: 4px; transition: all .15s; }
 .tok:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
-
 .tok.seg-name { background: #e3ecf7; color: var(--navy-800); font-weight: 700; padding: 6px 12px; }
 .tok.field    { background: #fff4d9; color: #8a5a00; }
 .tok.comp     { background: #d9f2ef; color: #0d6b5c; }
@@ -121,7 +120,7 @@
 .dot-field { background: #fff4d9; border: 1px solid #c99400; }
 .dot-comp  { background: #d9f2ef; border: 1px solid #0d6b5c; }
 
-/* ── CONCEPT CARDS ────────────────────────────────────────── */
+/* Concept cards */
 .concept-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -164,7 +163,7 @@
   font-size: 12.5px; color: var(--teal-600);
 }
 
-/* ── SEGMENT TABS ─────────────────────────────────────────── */
+/* Segments */
 .segment-tabs {
   display: flex; gap: 8px; justify-content: center;
   flex-wrap: wrap; margin-bottom: 28px;
@@ -248,7 +247,7 @@
 .field-table .f-name { font-weight: 600; color: var(--navy-800); }
 .field-table .f-desc { color: var(--ink-700); }
 
-/* ── DELIMITERS ───────────────────────────────────────────── */
+/* Delimiters */
 .delim-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -304,7 +303,6 @@
   word-break: break-all;
 }
 
-/* ── CALLOUTS ─────────────────────────────────────────────── */
 .callout {
   border-radius: var(--radius-sm);
   padding: 16px 20px;
@@ -322,7 +320,7 @@
   font-size: 13px;
 }
 
-/* ── POSITIONS DIAGRAM ────────────────────────────────────── */
+/* Positions */
 .positions-diagram {
   background: var(--white);
   border: 1px solid var(--border);
@@ -376,7 +374,7 @@
   border-radius: 4px;
 }
 
-/* ── WALKTHROUGH ──────────────────────────────────────────── */
+/* Walkthrough */
 .walkthrough {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -468,7 +466,7 @@
 }
 .wt-field .txt { color: var(--ink-700); }
 
-/* ── MESSAGE TYPES ────────────────────────────────────────── */
+/* Message types */
 .mtype-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -527,7 +525,7 @@
   margin-top: 4px;
 }
 
-/* ── PITFALLS ─────────────────────────────────────────────── */
+/* Pitfalls */
 .pitfall-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -572,7 +570,7 @@
 }
 .pitfall em { color: var(--navy-800); font-style: normal; font-weight: 600; }
 
-/* ── CTA ──────────────────────────────────────────────────── */
+/* CTA */
 .learn-cta {
   background:
     radial-gradient(800px 300px at 50% 50%, rgba(18,163,163,.25), transparent 70%),
@@ -593,11 +591,8 @@
   margin-bottom: 28px;
 }
 
-/* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 800px) {
-  .walkthrough {
-    grid-template-columns: 1fr;
-  }
+  .walkthrough { grid-template-columns: 1fr; }
   .learn-hero { padding: 50px 20px 40px; }
   .learn-section { padding: 60px 20px; }
   .segment-panel { padding: 22px 18px; }
