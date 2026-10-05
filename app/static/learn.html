@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Learn HL7 v2 visually — message anatomy, segments, delimiters, and how to read a real message."/>
+<title>Learn HL7 — HL7 Inspector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css"/>
+<link rel="stylesheet" href="/static/learn.css"/>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="app-header">
+  <div class="header-inner">
+    <a href="/" class="brand" style="text-decoration:none;">
+      <div class="brand-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="url(#brandGrad)"/>
+          <path d="M11 20h4l2-5 3 10 3-7 2 2h4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <defs>
+            <linearGradient id="brandGrad" x1="0" y1="0" x2="40" y2="40">
+              <stop stop-color="#0a2540"/>
+              <stop offset="1" stop-color="#0e7c86"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">HL7 Inspector</span>
+        <span class="brand-tag">Healthcare Interoperability Toolkit</span>
+      </div>
+    </a>
+    <nav class="header-nav">
+      <a href="/" class="nav-link">Tool</a>
+      <a href="/learn" class="nav-link" style="color:#fff;background:rgba(255,255,255,.08);">Learn</a>
+      <a href="https://github.com/ATTARAYOUB" target="_blank" rel="noopener" class="nav-link nav-github">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.2-.4-.6-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.8 1.7.3 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="learn-hero">
+  <div class="learn-hero-inner">
+    <div class="hero-badge">Visual Guide</div>
+    <h1 class="hero-title">
+      Learn <span class="hero-accent">HL7 v2</span><br/>
+      the visual way
+    </h1>
+    <p class="hero-sub">
+      HL7 v2 is the language hospitals use to talk to each other.
+      Here's how to read it — one picture at a time.
+    </p>
+
+    <!-- Timeline SVG -->
+    <div class="timeline-wrap">
+      <svg viewBox="0 0 900 90" class="timeline-svg" aria-label="HL7 version timeline">
+        <line x1="40" y1="55" x2="860" y2="55" stroke="#cbd5e1" stroke-width="2"/>
+        <g font-family="Inter, sans-serif" font-size="12" fill="#334155" text-anchor="middle">
+          <circle cx="80"  cy="55" r="7" fill="#0a2540"/>
+          <text x="80"  y="30">1987</text><text x="80"  y="80" font-weight="700">v2.0</text>
+
+          <circle cx="240" cy="55" r="7" fill="#0a2540"/>
+          <text x="240" y="30">1990</text><text x="240" y="80" font-weight="700">v2.1</text>
+
+          <circle cx="400" cy="55" r="7" fill="#0a2540"/>
+          <text x="400" y="30">1994</text><text x="400" y="80" font-weight="700">v2.2</text>
+
+          <circle cx="560" cy="55" r="7" fill="#0a2540"/>
+          <text x="560" y="30">1999</text><text x="560" y="80" font-weight="700">v2.3</text>
+
+          <circle cx="720" cy="55" r="10" fill="#0e7c86"/>
+          <text x="720" y="28" font-weight="700" fill="#0e7c86">2003+</text>
+          <text x="720" y="80" font-weight="700" fill="#0e7c86">v2.5 → 2.9</text>
+
+          <circle cx="850" cy="55" r="7" fill="#c9a227"/>
+          <text x="850" y="30" font-weight="700" fill="#c9a227">Today</text>
+          <text x="850" y="80" font-weight="700" fill="#c9a227">v2.5.1</text>
+        </g>
+      </svg>
+      <p class="timeline-caption">
+        HL7 v2 has been the backbone of hospital messaging since 1987. Version <strong>2.5.1</strong> is the most widely deployed today.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 1: ANATOMY ═══════════════ -->
+<section class="learn-section">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">01</div>
+      <h2 class="section-title-lg">Anatomy of an HL7 message</h2>
+      <p class="section-lead">
+        A message is <strong>not</strong> a blob of text. It's a carefully structured document with three levels of nesting:
+        <em>segments → fields → components</em>.
+      </p>
+    </div>
+
+    <!-- Visual anatomy -->
+    <div class="anatomy-diagram">
+      <div class="anatomy-line" data-tip="Segment name — 3 letters that identify what this line is about">
+        <span class="tok seg-name">PID</span><span class="tok delim">|</span><span class="tok field">1</span><span class="tok delim">|</span><span class="tok field">2</span><span class="tok delim">|</span><span class="tok field">123456</span><span class="tok delim">^</span><span class="tok comp">^^MRN</span><span class="tok delim">^</span><span class="tok comp">MR</span><span class="tok delim">|</span><span class="tok delim">|</span><span class="tok field">DOE</span><span class="tok delim">^</span><span class="tok comp">JOHN</span><span class="tok delim">^</span><span class="tok comp">A</span><span class="tok delim">|</span><span class="tok delim">|</span><span class="tok field">19800115</span><span class="tok delim">|</span><span class="tok field">M</span>
+      </div>
+
+      <div class="anatomy-labels">
+        <div class="anatomy-label">
+          <span class="dot dot-seg"></span>
+          <div><strong>Segment</strong><br/><span class="muted">3-letter code: <code>PID</code> = Patient Identification</span></div>
+        </div>
+        <div class="anatomy-label">
+          <span class="dot dot-field"></span>
+          <div><strong>Field</strong><br/><span class="muted">Separated by <code>|</code>. Position 1, 2, 3, …</span></div>
+        </div>
+        <div class="anatomy-label">
+          <span class="dot dot-comp"></span>
+          <div><strong>Component</strong><br/><span class="muted">Separated by <code>^</code>. Sub-parts of a field.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept cards -->
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="concept-num">1</div>
+        <h3>Segment</h3>
+        <p>One line = one segment. Starts with a 3-letter code (<code>MSH</code>, <code>PID</code>, <code>PV1</code>…). Each carries a specific kind of information.</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">2</div>
+        <h3>Field</h3>
+        <p>Parts of a segment, separated by the pipe <code>|</code>. Each position has a fixed meaning (<code>PID-5</code> is always the patient name).</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">3</div>
+        <h3>Component</h3>
+        <p>Parts of a field, separated by <code>^</code>. Patient name <code>DOE^JOHN^A</code> = Family <code>DOE</code>, Given <code>JOHN</code>, Middle <code>A</code>.</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">4</div>
+        <h3>Repetition</h3>
+        <p>Repeating values inside a field, separated by <code>~</code>. Multiple phone numbers: <code>555-1111~555-2222</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 2: SEGMENTS ═══════════════ -->
+<section class="learn-section alt-bg">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">02</div>
+      <h2 class="section-title-lg">The main segment types</h2>
+      <p class="section-lead">
+        Every HL7 message starts with <code>MSH</code>. Other segments appear based on the message type.
+        Click each card to see a real example.
+      </p>
+    </div>
+
+    <div class="segment-tabs" id="segment-tabs">
+      <button class="seg-tab active" data-seg="MSH">MSH</button>
+      <button class="seg-tab" data-seg="PID">PID</button>
+      <button class="seg-tab" data-seg="PV1">PV1</button>
+      <button class="seg-tab" data-seg="OBX">OBX</button>
+      <button class="seg-tab" data-seg="OBR">OBR</button>
+    </div>
+
+    <div class="segment-panel" id="segment-panel">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 3: DELIMITERS ═══════════════ -->
+<section class="learn-section">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">03</div>
+      <h2 class="section-title-lg">The five delimiters</h2>
+      <p class="section-lead">
+        HL7 uses five special characters to break up a message. They're <em>declared</em> in <code>MSH-1</code> and <code>MSH-2</code> — so they can technically change per message!
+      </p>
+    </div>
+
+    <div class="delim-grid">
+      <div class="delim-card">
+        <div class="delim-symbol">|</div>
+        <div class="delim-name">Field Separator</div>
+        <div class="delim-desc">Separates fields. Declared in <code>MSH-1</code>.</div>
+        <div class="delim-example"><code>PID|1|123|DOE</code></div>
+      </div>
+      <div class="delim-card">
+        <div class="delim-symbol">^</div>
+        <div class="delim-name">Component Separator</div>
+        <div class="delim-desc">Separates parts of a field. Declared in <code>MSH-2.1</code>.</div>
+        <div class="delim-example"><code>DOE^JOHN^A</code></div>
+      </div>
+      <div class="delim-card">
+        <div class="delim-symbol">~</div>
+        <div class="delim-name">Repetition Separator</div>
+        <div class="delim-desc">Separates repeated values. Declared in <code>MSH-2.2</code>.</div>
+        <div class="delim-example"><code>555-1111~555-2222</code></div>
+      </div>
+      <div class="delim-card">
+        <div class="delim-symbol">\</div>
+        <div class="delim-name">Escape Character</div>
+        <div class="delim-desc">Marks escaped sequences. Declared in <code>MSH-2.3</code>.</div>
+        <div class="delim-example"><code>\F\ = literal pipe</code></div>
+      </div>
+      <div class="delim-card">
+        <div class="delim-symbol">&amp;</div>
+        <div class="delim-name">Subcomponent Separator</div>
+        <div class="delim-desc">Separates parts of a component. Declared in <code>MSH-2.4</code>.</div>
+        <div class="delim-example"><code>AUTH&amp;MRN</code></div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>Why does it matter?</strong> Most tools assume the standard delimiters. A truly robust parser reads them from MSH — that's what HL7 Inspector does.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 4: FIELD POSITIONS ═══════════════ -->
+<section class="learn-section alt-bg">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">04</div>
+      <h2 class="section-title-lg">How field positions work</h2>
+      <p class="section-lead">
+        Each segment has numbered positions. We write them as <code>SEG-N</code>, e.g. <code>PID-5</code>.
+        The count starts at 1 <em>after</em> the segment name.
+      </p>
+    </div>
+
+    <div class="positions-diagram">
+      <div class="pos-row">
+        <div class="pos-cell pos-name">PID</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-num">1</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-num">2</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-value">123456^^^MRN</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-num">4</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-value">DOE^JOHN^A</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-num">6</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-value">19800115</div>
+        <div class="pos-cell pos-delim">|</div>
+        <div class="pos-cell pos-value">M</div>
+      </div>
+
+      <div class="pos-labels">
+        <div class="pos-label"><span class="pos-chip">PID-3</span> Patient Identifier</div>
+        <div class="pos-label"><span class="pos-chip">PID-5</span> Patient Name</div>
+        <div class="pos-label"><span class="pos-chip">PID-7</span> Date of Birth</div>
+        <div class="pos-label"><span class="pos-chip">PID-8</span> Administrative Sex</div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>Empty ≠ missing.</strong> Two pipes in a row (<code>||</code>) means the field exists but is empty.
+      That's different from the field being absent.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 5: FULL WALKTHROUGH ═══════════════ -->
+<section class="learn-section">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">05</div>
+      <h2 class="section-title-lg">Read a real message, line by line</h2>
+      <p class="section-lead">
+        Here's an actual ADT^A01 (patient admission). Click any line to see what it means.
+      </p>
+    </div>
+
+    <div class="walkthrough">
+      <div class="walkthrough-code" id="walkthrough-code">
+        <!-- Populated by JS -->
+      </div>
+      <div class="walkthrough-explain" id="walkthrough-explain">
+        <div class="wt-placeholder">
+          <div class="wt-icon">👆</div>
+          <p>Click any line to see its explanation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 6: MESSAGE TYPES ═══════════════ -->
+<section class="learn-section alt-bg">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">06</div>
+      <h2 class="section-title-lg">Common message types</h2>
+      <p class="section-lead">
+        The <code>MSH-9</code> field tells you the message type and trigger event, written as <code>TYPE^EVENT</code>.
+      </p>
+    </div>
+
+    <div class="mtype-grid">
+      <div class="mtype-card">
+        <div class="mtype-code">ADT</div>
+        <div class="mtype-full">Admit, Discharge, Transfer</div>
+        <div class="mtype-events">A01 Admit · A03 Discharge · A08 Update</div>
+        <div class="mtype-use">Patient movement</div>
+      </div>
+      <div class="mtype-card">
+        <div class="mtype-code">ORU</div>
+        <div class="mtype-full">Observation Result (Unsolicited)</div>
+        <div class="mtype-events">R01 Result · R30 Point-of-care</div>
+        <div class="mtype-use">Lab & diagnostic results</div>
+      </div>
+      <div class="mtype-card">
+        <div class="mtype-code">ORM</div>
+        <div class="mtype-full">Order Message</div>
+        <div class="mtype-events">O01 Order · O02 Response</div>
+        <div class="mtype-use">Placing orders</div>
+      </div>
+      <div class="mtype-card">
+        <div class="mtype-code">SIU</div>
+        <div class="mtype-full">Scheduling Information Unsolicited</div>
+        <div class="mtype-events">S12 New appointment · S14 Modification</div>
+        <div class="mtype-use">Appointment booking</div>
+      </div>
+      <div class="mtype-card">
+        <div class="mtype-code">ACK</div>
+        <div class="mtype-full">General Acknowledgement</div>
+        <div class="mtype-events">AA Accept · AE Error · AR Reject</div>
+        <div class="mtype-use">Confirms a message was received</div>
+      </div>
+      <div class="mtype-card">
+        <div class="mtype-code">MFN</div>
+        <div class="mtype-full">Master File Notification</div>
+        <div class="mtype-events">M01 Update · M02 Add</div>
+        <div class="mtype-use">Reference data updates</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 7: PITFALLS ═══════════════ -->
+<section class="learn-section">
+  <div class="learn-container">
+    <div class="section-head">
+      <div class="step-num">07</div>
+      <h2 class="section-title-lg">Common pitfalls</h2>
+      <p class="section-lead">
+        Mistakes that trip up newcomers and experienced engineers alike.
+      </p>
+    </div>
+
+    <div class="pitfall-list">
+      <div class="pitfall">
+        <div class="pitfall-icon">⚠</div>
+        <div>
+          <h4>Assuming standard delimiters</h4>
+          <p>Most systems use <code>|^~\&amp;</code>, but the spec allows any. Always read <code>MSH-1</code> and <code>MSH-2</code> before parsing.</p>
+        </div>
+      </div>
+      <div class="pitfall">
+        <div class="pitfall-icon">⚠</div>
+        <div>
+          <h4>Confusing empty fields with missing ones</h4>
+          <p><code>PID|1||X</code> means field 2 is empty. <code>PID|1|X</code> means field 2 is <code>X</code> and field 3 doesn't exist. Both are legal.</p>
+        </div>
+      </div>
+      <div class="pitfall">
+        <div class="pitfall-icon">⚠</div>
+        <div>
+          <h4>Trimming whitespace that matters</h4>
+          <p>Never trim spaces inside field values — some systems use them as part of the value. Only trim around the delimiters.</p>
+        </div>
+      </div>
+      <div class="pitfall">
+        <div class="pitfall-icon">⚠</div>
+        <div>
+          <h4>Ignoring the version field</h4>
+          <p><code>MSH-12</code> tells you the version. Field meanings <em>change</em> between 2.3 and 2.5.1. Always parse version-aware.</p>
+        </div>
+      </div>
+      <div class="pitfall">
+        <div class="pitfall-icon">⚠</div>
+        <div>
+          <h4>Assuming CRLF everywhere</h4>
+          <p>HL7 uses <code>\r</code> as segment terminator. Some systems send <code>\r\n</code> or just <code>\n</code>. Normalize first.</p>
+        </div>
+      </div>
+      <div class="pitfall">
+        <div class="pitfall-icon">⚠</div>
+        <div>
+          <h4>Sending PHI over unencrypted channels</h4>
+          <p>HL7 messages often carry names, MRNs, and dates of birth. Never log them in plaintext or send over non-TLS connections.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<section class="learn-cta">
+  <div class="learn-cta-inner">
+    <h2>Ready to try it?</h2>
+    <p>Paste a real (synthetic) HL7 message and see every field annotated live.</p>
+    <a href="/" class="btn-primary-lg">Open HL7 Inspector</a>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="app-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="url(#footerGrad2)"/>
+          <path d="M11 20h4l2-5 3 10 3-7 2 2h4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <defs>
+            <linearGradient id="footerGrad2" x1="0" y1="0" x2="40" y2="40">
+              <stop stop-color="#0a2540"/>
+              <stop offset="1" stop-color="#0e7c86"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <div class="footer-brand-name">HL7 Inspector</div>
+        <div class="footer-brand-tag">Professional Healthcare Interoperability</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Created By</h4>
+      <p class="creator-name">Ayoub Attar</p>
+      <p class="creator-alias">Eagle1st Developper</p>
+      <p class="creator-role">Full-Stack Developer · Casablanca, Morocco</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-links">
+        <li><a href="mailto:ATTAR.AYOUB@outlook.com">ATTAR.AYOUB@outlook.com</a></li>
+        <li><a href="tel:+212620834063">+212 620 834 063</a></li>
+        <li><a href="https://wa.me/212620834063" target="_blank" rel="noopener">WhatsApp</a></li>
+        <li>Casablanca, Morocco</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul class="footer-links">
+        <li><a href="https://profile-ayoub.pages.dev" target="_blank" rel="noopener" class="social-link">Portfolio</a></li>
+        <li><a href="https://github.com/ATTARAYOUB" target="_blank" rel="noopener" class="social-link">GitHub</a></li>
+        <li><a href="https://linkedin.com/in/itsayoubattar" target="_blank" rel="noopener" class="social-link">LinkedIn</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-privacy">
+      <strong>Privacy:</strong> Messages are processed in-memory and never stored on the server.
+      Use synthetic data for demos and testing.
+    </div>
+    <div class="footer-copy">
+      © <span id="year"></span> HL7 Inspector · Built by
+      <a href="https://profile-ayoub.pages.dev" target="_blank" rel="noopener">Eagle1st Developper</a>
+      · v1.0
+    </div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="/static/learn.js"></script>
+</body>
+</html>
