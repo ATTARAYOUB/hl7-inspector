@@ -149,7 +149,6 @@ async function parseMessage(){
   $("explorer-card").classList.remove("hidden");
   $("outputs-card").classList.remove("hidden");
 
-  // Pre-load JSON by default
   outputs.json = null;
   await loadOutput("json");
   setStatus($("parse-status"), "Parsed successfully.", "ok");
