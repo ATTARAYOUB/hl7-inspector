@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="Learn HL7 v2 visually — message anatomy, segments, delimiters, and how to read a real message."/>
-<title>Learn HL7 — HL7 Inspector</title>
+<meta name="description" content="Learn HL7 v2 visually â€” message anatomy, segments, delimiters, and how to read a real message."/>
+<title>Learn HL7 â€” HL7 Inspector</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -52,7 +52,7 @@
     </h1>
     <p class="hero-sub">
       HL7 v2 is the language hospitals use to talk to each other.
-      Here's how to read it — one picture at a time.
+      Here's how to read it â€” one picture at a time.
     </p>
 
     <div class="timeline-wrap">
@@ -73,7 +73,7 @@
 
           <circle cx="720" cy="55" r="10" fill="#0e7c86"/>
           <text x="720" y="28" font-weight="700" fill="#0e7c86">2003+</text>
-          <text x="720" y="80" font-weight="700" fill="#0e7c86">v2.5 → 2.9</text>
+          <text x="720" y="80" font-weight="700" fill="#0e7c86">v2.5 â†’ 2.9</text>
 
           <circle cx="850" cy="55" r="7" fill="#c9a227"/>
           <text x="850" y="30" font-weight="700" fill="#c9a227">Today</text>
@@ -94,7 +94,7 @@
       <h2 class="section-title-lg">Anatomy of an HL7 message</h2>
       <p class="section-lead">
         A message is <strong>not</strong> a blob of text. It's a carefully structured document with three levels of nesting:
-        <em>segments → fields → components</em>.
+        <em>segments â†’ fields â†’ components</em>.
       </p>
     </div>
 
@@ -110,7 +110,7 @@
         </div>
         <div class="anatomy-label">
           <span class="dot dot-field"></span>
-          <div><strong>Field</strong><br/><span class="muted">Separated by <code>|</code>. Position 1, 2, 3, …</span></div>
+          <div><strong>Field</strong><br/><span class="muted">Separated by <code>|</code>. Position 1, 2, 3, â€¦</span></div>
         </div>
         <div class="anatomy-label">
           <span class="dot dot-comp"></span>
@@ -123,7 +123,7 @@
       <div class="concept-card">
         <div class="concept-num">1</div>
         <h3>Segment</h3>
-        <p>One line = one segment. Starts with a 3-letter code (<code>MSH</code>, <code>PID</code>, <code>PV1</code>…). Each carries a specific kind of information.</p>
+        <p>One line = one segment. Starts with a 3-letter code (<code>MSH</code>, <code>PID</code>, <code>PV1</code>â€¦). Each carries a specific kind of information.</p>
       </div>
       <div class="concept-card">
         <div class="concept-num">2</div>
@@ -173,7 +173,7 @@
       <div class="step-num">03</div>
       <h2 class="section-title-lg">The five delimiters</h2>
       <p class="section-lead">
-        HL7 uses five special characters to break up a message. They're <em>declared</em> in <code>MSH-1</code> and <code>MSH-2</code> — so they can technically change per message!
+        HL7 uses five special characters to break up a message. They're <em>declared</em> in <code>MSH-1</code> and <code>MSH-2</code> â€” so they can technically change per message!
       </p>
     </div>
 
@@ -211,7 +211,7 @@
     </div>
 
     <div class="callout callout-info">
-      <strong>Why does it matter?</strong> Most tools assume the standard delimiters. A truly robust parser reads them from MSH — that's what HL7 Inspector does.
+      <strong>Why does it matter?</strong> Most tools assume the standard delimiters. A truly robust parser reads them from MSH â€” that's what HL7 Inspector does.
     </div>
   </div>
 </section>
@@ -257,7 +257,7 @@
     </div>
 
     <div class="callout callout-warn">
-      <strong>Empty ≠ missing.</strong> Two pipes in a row (<code>||</code>) means the field exists but is empty.
+      <strong>Empty â‰  missing.</strong> Two pipes in a row (<code>||</code>) means the field exists but is empty.
       That's different from the field being absent.
     </div>
   </div>
@@ -277,7 +277,7 @@
       <div class="walkthrough-code" id="walkthrough-code"></div>
       <div class="walkthrough-explain" id="walkthrough-explain">
         <div class="wt-placeholder">
-          <div class="wt-icon">👆</div>
+          <div class="wt-icon">ðŸ‘†</div>
           <p>Click any line to see its explanation.</p>
         </div>
       </div>
@@ -299,37 +299,37 @@
       <div class="mtype-card">
         <div class="mtype-code">ADT</div>
         <div class="mtype-full">Admit, Discharge, Transfer</div>
-        <div class="mtype-events">A01 Admit · A03 Discharge · A08 Update</div>
+        <div class="mtype-events">A01 Admit Â· A03 Discharge Â· A08 Update</div>
         <div class="mtype-use">Patient movement</div>
       </div>
       <div class="mtype-card">
         <div class="mtype-code">ORU</div>
         <div class="mtype-full">Observation Result (Unsolicited)</div>
-        <div class="mtype-events">R01 Result · R30 Point-of-care</div>
+        <div class="mtype-events">R01 Result Â· R30 Point-of-care</div>
         <div class="mtype-use">Lab & diagnostic results</div>
       </div>
       <div class="mtype-card">
         <div class="mtype-code">ORM</div>
         <div class="mtype-full">Order Message</div>
-        <div class="mtype-events">O01 Order · O02 Response</div>
+        <div class="mtype-events">O01 Order Â· O02 Response</div>
         <div class="mtype-use">Placing orders</div>
       </div>
       <div class="mtype-card">
         <div class="mtype-code">SIU</div>
         <div class="mtype-full">Scheduling Information Unsolicited</div>
-        <div class="mtype-events">S12 New appointment · S14 Modification</div>
+        <div class="mtype-events">S12 New appointment Â· S14 Modification</div>
         <div class="mtype-use">Appointment booking</div>
       </div>
       <div class="mtype-card">
         <div class="mtype-code">ACK</div>
         <div class="mtype-full">General Acknowledgement</div>
-        <div class="mtype-events">AA Accept · AE Error · AR Reject</div>
+        <div class="mtype-events">AA Accept Â· AE Error Â· AR Reject</div>
         <div class="mtype-use">Confirms a message was received</div>
       </div>
       <div class="mtype-card">
         <div class="mtype-code">MFN</div>
         <div class="mtype-full">Master File Notification</div>
-        <div class="mtype-events">M01 Update · M02 Add</div>
+        <div class="mtype-events">M01 Update Â· M02 Add</div>
         <div class="mtype-use">Reference data updates</div>
       </div>
     </div>
@@ -348,42 +348,42 @@
 
     <div class="pitfall-list">
       <div class="pitfall">
-        <div class="pitfall-icon">⚠</div>
+        <div class="pitfall-icon">âš </div>
         <div>
           <h4>Assuming standard delimiters</h4>
           <p>Most systems use <code>|^~\&amp;</code>, but the spec allows any. Always read <code>MSH-1</code> and <code>MSH-2</code> before parsing.</p>
         </div>
       </div>
       <div class="pitfall">
-        <div class="pitfall-icon">⚠</div>
+        <div class="pitfall-icon">âš </div>
         <div>
           <h4>Confusing empty fields with missing ones</h4>
           <p><code>PID|1||X</code> means field 2 is empty. <code>PID|1|X</code> means field 2 is <code>X</code> and field 3 doesn't exist. Both are legal.</p>
         </div>
       </div>
       <div class="pitfall">
-        <div class="pitfall-icon">⚠</div>
+        <div class="pitfall-icon">âš </div>
         <div>
           <h4>Trimming whitespace that matters</h4>
-          <p>Never trim spaces inside field values — some systems use them as part of the value. Only trim around the delimiters.</p>
+          <p>Never trim spaces inside field values â€” some systems use them as part of the value. Only trim around the delimiters.</p>
         </div>
       </div>
       <div class="pitfall">
-        <div class="pitfall-icon">⚠</div>
+        <div class="pitfall-icon">âš </div>
         <div>
           <h4>Ignoring the version field</h4>
           <p><code>MSH-12</code> tells you the version. Field meanings <em>change</em> between 2.3 and 2.5.1. Always parse version-aware.</p>
         </div>
       </div>
       <div class="pitfall">
-        <div class="pitfall-icon">⚠</div>
+        <div class="pitfall-icon">âš </div>
         <div>
           <h4>Assuming CRLF everywhere</h4>
           <p>HL7 uses <code>\r</code> as segment terminator. Some systems send <code>\r\n</code> or just <code>\n</code>. Normalize first.</p>
         </div>
       </div>
       <div class="pitfall">
-        <div class="pitfall-icon">⚠</div>
+        <div class="pitfall-icon">âš </div>
         <div>
           <h4>Sending PHI over unencrypted channels</h4>
           <p>HL7 messages often carry names, MRNs, and dates of birth. Never log them in plaintext or send over non-TLS connections.</p>
@@ -425,7 +425,7 @@
       <h4>Created By</h4>
       <p class="creator-name">Ayoub Attar</p>
       <p class="creator-alias">Eagle1st Developper</p>
-      <p class="creator-role">Full-Stack Developer · Casablanca, Morocco</p>
+      <p class="creator-role">Full-Stack Developer Â· Casablanca, Morocco</p>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
@@ -451,9 +451,9 @@
       Use synthetic data for demos and testing.
     </div>
     <div class="footer-copy">
-      © <span id="year"></span> HL7 Inspector · Built by
+      Â© <span id="year"></span> HL7 Inspector Â· Built by
       <a href="https://profile-ayoub.pages.dev" target="_blank" rel="noopener">Eagle1st Developper</a>
-      · v1.0
+      Â· v1.0
     </div>
   </div>
 </footer>
